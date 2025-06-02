@@ -1,5 +1,5 @@
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column,Integer,String,DateTime,MetaData,Float
+from sqlalchemy import Column,Integer,String,DateTime,MetaData,Float,Text
 from datetime import datetime
 # Naming convention
 convention = {
@@ -45,4 +45,16 @@ class Contract(Base):
     contract_date = Column(String, nullable=False)
     amount = Column(Integer, nullable=False)
     status = Column(String, nullable=False)  
+    created_at = Column(DateTime, default=datetime.now)
+
+
+# perfomance review
+class PerformanceReview(Base):
+    __tablename__ = "performance_reviews"
+
+    id = Column(Integer, primary_key=True)
+    contract_id = Column(Integer, nullable=False)
+    review_date = Column(String, nullable=False)
+    rating = Column(Float, nullable=False)  
+    remarks = Column(Text)
     created_at = Column(DateTime, default=datetime.now)
