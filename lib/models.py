@@ -1,5 +1,5 @@
 from sqlalchemy.orm import declarative_base,relationship
-from sqlalchemy import Column,Integer,String,DateTime,MetaData,Float,Text,ForeignKey
+from sqlalchemy import Column,Integer,String,DateTime,MetaData,Float,Text,ForeignKey,Date
 from datetime import datetime
 # Naming convention
 convention = {
@@ -32,8 +32,8 @@ class Project(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
-    start_date = Column(String, nullable=False)
-    end_date = Column(String)
+    start_date = Column(Date, nullable=False)
+    end_date = Column(Date)
     budget = Column(Float, nullable=False)
     created_at = Column(DateTime, default=datetime.now)
 
@@ -49,7 +49,7 @@ class Contract(Base):
     # foreign keys go to the many side of vendors and projects
     vendor_id = Column(Integer,ForeignKey("vendors.id"), nullable=False)
     project_id = Column(Integer,ForeignKey("projects.id"), nullable=False)
-    contract_date = Column(String, nullable=False)
+    contract_date = Column(Date, nullable=False)
     amount = Column(Integer, nullable=False)
     status = Column(String, nullable=False)  
     created_at = Column(DateTime, default=datetime.now)
@@ -69,7 +69,7 @@ class PerformanceReview(Base):
     id = Column(Integer, primary_key=True)
     # foreign key goes to the many side of contracts
     contract_id = Column(Integer,ForeignKey("contracts.id"), nullable=False)
-    review_date = Column(String, nullable=False)
+    review_date = Column(Date, nullable=False)
     rating = Column(Float, nullable=False)  
     remarks = Column(Text)
     created_at = Column(DateTime, default=datetime.now)
