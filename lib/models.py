@@ -1,5 +1,5 @@
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column,Integer,String,DateTime,MetaData
+from sqlalchemy import Column,Integer,String,DateTime,MetaData,Float
 from datetime import datetime
 # Naming convention
 convention = {
@@ -20,4 +20,16 @@ class Vendor(Base):
     name = Column(String, nullable=False)
     contact_info = Column(String)
     specialty = Column(String)
+    created_at = Column(DateTime, default=datetime.now)
+
+
+# projects table
+class Project(Base):
+    __tablename__ = "projects"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    start_date = Column(String, nullable=False)
+    end_date = Column(String)
+    budget = Column(Float, nullable=False)
     created_at = Column(DateTime, default=datetime.now)
