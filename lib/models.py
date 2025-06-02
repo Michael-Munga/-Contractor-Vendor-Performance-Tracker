@@ -1,5 +1,5 @@
-from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column,Integer,String,DateTime,MetaData,Float,Text
+from sqlalchemy.orm import declarative_base,relationship
+from sqlalchemy import Column,Integer,String,DateTime,MetaData,Float,Text,ForeignKey
 from datetime import datetime
 # Naming convention
 convention = {
@@ -22,6 +22,9 @@ class Vendor(Base):
     specialty = Column(String)
     created_at = Column(DateTime, default=datetime.now)
 
+    # one-to-many --> one vendor has many contracts
+    contracts = relationship("Contract", back_populates="vendor")
+
 
 # projects table
 class Project(Base):
@@ -34,18 +37,29 @@ class Project(Base):
     budget = Column(Float, nullable=False)
     created_at = Column(DateTime, default=datetime.now)
 
+    # one-to-many---->one project has many contracts
+    contracts = relationship("Contract", back_populates="project")
+
 
 # Contract table 
 class Contract(Base):
     __tablename__ = "contracts"
 
     id = Column(Integer, primary_key=True)
-    vendor_id = Column(Integer, nullable=False)
-    project_id = Column(Integer, nullable=False)
+    # foreign keys go to the many side of vendors and projects
+    vendor_id = Column(Integer,ForeignKey("vendors.id"), nullable=False)
+    project_id = Column(Integer,ForeignKey("projects.id"), nullable=False)
     contract_date = Column(String, nullable=False)
     amount = Column(Integer, nullable=False)
     status = Column(String, nullable=False)  
     created_at = Column(DateTime, default=datetime.now)
+
+    # relationships (many side in relation to vendors/projects --> one-to-many relationship with them)
+    vendor = relationship("Vendor", back_populates="contracts")
+    project = relationship("Project", back_populates="contracts")
+
+    # one-to-many ---> one contract has many performance reviews
+    reviews = relationship("PerformanceReview", back_populates="contract")
 
 
 # perfomance review
@@ -53,8 +67,13 @@ class PerformanceReview(Base):
     __tablename__ = "performance_reviews"
 
     id = Column(Integer, primary_key=True)
-    contract_id = Column(Integer, nullable=False)
+    # foreign key goes to the many side of contracts
+    contract_id = Column(Integer,ForeignKey("contracts.id"), nullable=False)
     review_date = Column(String, nullable=False)
     rating = Column(Float, nullable=False)  
     remarks = Column(Text)
     created_at = Column(DateTime, default=datetime.now)
+
+    # relationship (many side in relation to contracts --> one-to-many with contracts)
+    contract = relationship("Contract", back_populates="reviews")
+
