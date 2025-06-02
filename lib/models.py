@@ -33,3 +33,16 @@ class Project(Base):
     end_date = Column(String)
     budget = Column(Float, nullable=False)
     created_at = Column(DateTime, default=datetime.now)
+
+
+# Contract table 
+class Contract(Base):
+    __tablename__ = "contracts"
+
+    id = Column(Integer, primary_key=True)
+    vendor_id = Column(Integer, nullable=False)
+    project_id = Column(Integer, nullable=False)
+    contract_date = Column(String, nullable=False)
+    amount = Column(Integer, nullable=False)
+    status = Column(String, nullable=False)  
+    created_at = Column(DateTime, default=datetime.now)
