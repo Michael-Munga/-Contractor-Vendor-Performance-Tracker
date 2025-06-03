@@ -207,7 +207,7 @@ def list_reviews():
     try:
         reviews = session.query(PerformanceReview).all()
         for r in reviews:
-            print(f"ID: {r.id} | Contract: {r.contract.id} | Rating: {r.rating} | Date: {r.review_date}")
+            print(f"ID: {r.id} | Contract: {r.contract.id} | Rating: {r.rating} | Date: {r.review_date} | Remarks: {r.remarks}")
     except Exception as e:
         print(f"Error: {e}")
 
