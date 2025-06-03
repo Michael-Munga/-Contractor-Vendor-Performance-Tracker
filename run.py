@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from config.setup import Session
-from lib.models import Vendor,Project,Contract
+from lib.models import Vendor,Project,Contract,PerformanceReview
 from datetime import date
 
 session = Session()
@@ -185,15 +185,46 @@ def delete_contract():
 
 # Reviews
 def add_review():
-    pass
+    contract_id = input_int("Contract ID: ")
+    review_date = input_date("Review date (YYYY-MM-DD): ")
+    rating = float(input("Rating (0.0 - 5.0): "))
+    remarks = input("Remarks: ")
+    try:
+        contract = session.get(Contract, contract_id)
+        if not contract:
+            print("Contract not found.")
+            return
+        review = PerformanceReview(contract=contract, review_date=review_date, rating=rating, remarks=remarks)
+        session.add(review)
+        session.commit()
+        print("Review added successfully.")
+    except Exception as e:
+        print(f"Error: {e}")
+        session.rollback()
 
 
 def list_reviews():
-    pass
+    try:
+        reviews = session.query(PerformanceReview).all()
+        for r in reviews:
+            print(f"ID: {r.id} | Contract: {r.contract.id} | Rating: {r.rating} | Date: {r.review_date}")
+    except Exception as e:
+        print(f"Error: {e}")
 
 
 def delete_review():
-    pass
+    review_id = input_int("Review ID to delete: ")
+    try:
+        review = session.get(PerformanceReview, review_id)
+        if review:
+            session.delete(review)
+            session.commit()
+            print("Review deleted.")
+        else:
+            print("Review not found.")
+    except Exception as e:
+        print(f"Error: {e}")
+        session.rollback()
 
 
 # CLI Menu 
