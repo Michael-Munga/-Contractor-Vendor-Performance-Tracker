@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 from config.setup import Session
-from lib.models import Vendor
+from lib.models import Vendor,Project
+from datetime import date
 
 session = Session()
 
@@ -11,6 +12,13 @@ def input_int(prompt):
             return int(input(prompt))
         except ValueError:
             print("Enter a valid number.")
+
+def input_date(prompt):
+    while True:
+        try:
+            return date.fromisoformat(input(prompt))
+        except ValueError:
+            print("Enter date as YYYY-MM-DD.")
 # CRUD Operations 
 
 # Vendors
@@ -68,19 +76,46 @@ def delete_vendor():
         session.rollback()
 
 
-
-
 # Projects
 def add_project():
-    pass
+    name = input("Project name: ")
+    start = input_date("Start date (YYYY-MM-DD): ")
+    end = input_date("End date (YYYY-MM-DD): ")
+    budget = float(input("Budget: "))
+    try:
+        project = Project(name=name, start_date=start, end_date=end, budget=budget)
+        session.add(project)
+        session.commit()
+        print("Project added successfully.")
+    except Exception as e:
+        print(f"Error: {e}")
+        session.rollback()
+    
 
 
 def list_projects():
-    pass
+    try:
+        projects = session.query(Project).all()
+        for p in projects:
+            print(f"ID: {p.id} | {p.name} | Budget: {p.budget}")
+    except Exception as e:
+        print(f"Error: {e}")
 
 
 def update_project():
-    pass
+    project_id = input_int("Project ID to update: ")
+    try:
+        project = session.get(Project, project_id)
+        if not project:
+            print("Project not found.")
+            return
+        project.name = input(f"New name (current: {project.name}): ") or project.name
+        project.budget = float(input(f"New budget (current: {project.budget}): ") or project.budget)
+        session.commit()
+        print("Project updated.")
+    except Exception as e:
+        print(f"Error: {e}")
+        session.rollback()
 
 
 # Contracts
