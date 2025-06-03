@@ -1,26 +1,73 @@
 #!/usr/bin/env python3
 
-# from config.setup import Session
-# from lib.models import Vendor, Project, Contract, PerformanceReview
+from config.setup import Session
+from lib.models import Vendor
 
+session = Session()
 
+def input_int(prompt):
+    while True:
+        try:
+            return int(input(prompt))
+        except ValueError:
+            print("Enter a valid number.")
 # CRUD Operations 
 
 # Vendors
 def add_vendor():
-    pass
-
+    name = input("Vendor name: ")
+    contact = input("Contact info: ")
+    specialty = input("Specialty: ")
+    try:
+        vendor = Vendor(name=name, contact_info=contact,specialty=specialty)
+        session.add(vendor)
+        session.commit()
+        print("vendor added succesfully.")
+    except Exception as e:
+        print(f"Error: {e}")
+        session.rollback()
+        
 
 def list_vendors():
-    pass
-
-
+    try:
+        vendors =session.query(Vendor).all()
+        for v in vendors:
+            print(f"ID: {v.id} | Name: {v.name} | Specialty: {v.specialty}")
+    except Exception as e:
+        print(f"Error: {e}")
+        
 def update_vendor():
-    pass
-
+    vendor_id =input_int("Vendor ID to update")
+    try:
+        vendor =session.get(Vendor,vendor_id)
+        if not vendor:
+            print("Vendor not found")
+            return
+        vendor.name = input(f"New name (current: {vendor.name}): ") or vendor.name
+        vendor.contact_info = input(f"New contact info (current: {vendor.contact_info}): ") or vendor.contact_info
+        vendor.specialty = input(f"New specialty (current: {vendor.specialty}): ") or vendor.specialty
+        session.commit()
+        print("Vendor updated.")
+    except Exception as e:
+        print(f"Error: {e}")
+        session.rollback()
+        
 
 def delete_vendor():
-    pass
+    vendor_id = input_int("Vendor ID to delete: ")
+    try:
+        vendor = session.get(Vendor, vendor_id)
+        if vendor:
+            session.delete(vendor)
+            session.commit()
+            print("Vendor deleted.")
+        else:
+            print("Vendor not found.")
+    except Exception as e:
+        print(f"Error: {e}")
+        session.rollback()
+
+
 
 
 # Projects
