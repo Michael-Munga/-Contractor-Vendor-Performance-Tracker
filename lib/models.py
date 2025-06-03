@@ -74,6 +74,6 @@ class PerformanceReview(Base):
     remarks = Column(Text)
     created_at = Column(DateTime, default=datetime.now)
 
-    # relationship (many side in relation to contracts --> one-to-many with contracts)
+    # relationship (many side in relation to contracts --> one-to-many with contracts
     contract = relationship("Contract", back_populates="reviews")
 

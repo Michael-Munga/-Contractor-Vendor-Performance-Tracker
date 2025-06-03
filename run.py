@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from config.setup import Session
-from lib.models import Vendor,Project
+from lib.models import Vendor,Project,Contract
 from datetime import date
 
 session = Session()
@@ -120,19 +120,67 @@ def update_project():
 
 # Contracts
 def add_contract():
-    pass
+    vendor_id = input_int("Vendor ID: ")
+    project_id = input_int("Project ID: ")
+    contract_date = input_date("Contract date (YYYY-MM-DD): ")
+    amount = input_int("Amount: ")
+    status = input("Status: ")
+    try:
+        vendor = session.get(Vendor, vendor_id)
+        project = session.get(Project, project_id)
+        if not vendor or not project:
+            print("Invalid Vendor or Project ID.")
+            return
+        contract = Contract(vendor=vendor, project=project, contract_date=contract_date, amount=amount, status=status)
+        session.add(contract)
+        session.commit()
+        print("Contract added successfully.")
+    except Exception as e:
+        print(f"Error: {e}")
+        session.rollback()
 
 
 def list_contracts():
-    pass
+    try:
+        contracts = session.query(Contract).all()
+        for c in contracts:
+            print(f"ID: {c.id} | Vendor: {c.vendor.name} | Project: {c.project.name} | Amount: {c.amount} | Status: {c.status}")
+    except Exception as e:
+        print(f"Error: {e}")
 
 
 def update_contract_status():
-    pass
+    contract_id = input_int("Contract ID to update: ")
+    try:
+        contract = session.get(Contract, contract_id)
+        if contract:
+            new_status = input(f"New status (current: {contract.status}): ")
+            contract.status = new_status or contract.status
+            session.commit()
+            print("Contract status updated.")
+        else:
+            print("Contract not found.")
+    except Exception as e:
+        print(f"Error: {e}")
+        session.rollback()
 
 
 def delete_contract():
-    pass
+    contract_id = input_int("Contract ID to delete: ")
+    try:
+        contract = session.get(Contract, contract_id)
+        if contract:
+             # Delete related performance reviews 
+            for review in contract.reviews:
+                session.delete(review)
+            session.delete(contract)
+            session.commit()
+            print("Contract and associated reviews deleted.")
+        else:
+            print("Contract not found.")
+    except Exception as e:
+        print(f"Error: {e}")
+        session.rollback()
 
 
 # Reviews
