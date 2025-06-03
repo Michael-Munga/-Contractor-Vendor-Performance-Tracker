@@ -28,3 +28,4 @@ A command-line application for managing vendors, projects, contracts, and perfor
 For support, contact: micknyalle@gmail.com
 
 
+
